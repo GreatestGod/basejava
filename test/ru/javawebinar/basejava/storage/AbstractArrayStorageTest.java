@@ -13,6 +13,10 @@ public abstract class AbstractArrayStorageTest {
     private static final String UUID_2 = "uuid2";
     private static final String UUID_3 = "uuid3";
 
+    public AbstractArrayStorageTest(Storage storage) {
+        this.storage = storage;
+    }
+
     @Before
     public void setUp() throws Exception {
         storage.clear();
@@ -28,7 +32,8 @@ public abstract class AbstractArrayStorageTest {
 
     @Test
     public void clear() throws Exception {
-
+        storage.clear();
+        Assert.assertEquals(0, storage.size());
     }
 
     @Test
@@ -53,7 +58,8 @@ public abstract class AbstractArrayStorageTest {
 
     @Test
     public void get() throws Exception {
-
+        Resume testResume = new Resume(UUID_1);
+        Assert.assertEquals(testResume, storage.get(UUID_1));
     }
 
     @Test(expected = NotExistStorageException.class)
