@@ -1,6 +1,7 @@
 package ru.javawebinar.basejava.storage;
 
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import ru.javawebinar.basejava.exception.ExistStorageException;
@@ -8,11 +9,15 @@ import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.exception.StorageException;
 import ru.javawebinar.basejava.model.Resume;
 
+import java.util.Arrays;
+
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public abstract class AbstractStorageTest {
     private Storage storage;
+    private static final int STORAGE_LIMIT = 10000;
 
     private static final String UUID_1 = "uuid1";
     private static final String UUID_2 = "uuid2";
@@ -70,9 +75,16 @@ public abstract class AbstractStorageTest {
     public void getAll() throws Exception {
         Resume[] array = storage.getAll();
         assertEquals(3, array.length);
-        assertEquals(RESUME_1, array[0]);
-        assertEquals(RESUME_2, array[1]);
-        assertEquals(RESUME_3, array[2]);
+
+        Resume[] testArray = new Resume[3];
+        testArray[0] = RESUME_1;
+        testArray[1] = RESUME_2;
+        testArray[2] = RESUME_3;
+
+        Arrays.sort(array);
+        Arrays.sort(testArray);
+
+        assertArrayEquals(testArray, array);
     }
 
     @Test
@@ -88,9 +100,13 @@ public abstract class AbstractStorageTest {
     }
 
     @Test(expected = StorageException.class)
+
     public void saveOverflow() throws Exception {
+        Assume.assumeTrue(storage.getClass() == ArrayStorage.class
+                || storage.getClass() == SortedArrayStorage.class);
+
         try {
-            for (int i = 4; i <= AbstractArrayStorage.STORAGE_LIMIT; i++) {
+            for (int i = 4; i <= STORAGE_LIMIT; i++) {
                 storage.save(new Resume());
             }
         } catch (StorageException e) {

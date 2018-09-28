@@ -14,21 +14,6 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected void fillDeletedElement(int index, String uuid) {
-        storage.remove(index);
-    }
-
-    @Override
-    protected void insertElement(Resume r, int index) {
-        storage.add(r);
-    }
-
-    @Override
-    protected Resume pull(int index, String uuid) {
-        return storage.get(index);
-    }
-
-    @Override
     public Resume[] getAll() {
         return storage.toArray(new Resume[0]);
     }
@@ -48,7 +33,37 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected void insert(int index, Resume resume) {
-        storage.add(index, resume);
+    protected void doUpdate(Resume r, Object searchKey) {
+        storage.set((Integer) searchKey, r);
+    }
+
+    @Override
+    protected void doSave(Resume r, Object searchKey) {
+        storage.add(r);
+    }
+
+    @Override
+    protected Resume doGet(Object searchKey) {
+        return storage.get((Integer) searchKey);
+    }
+
+    @Override
+    protected void doDelete(Object searchKey) {
+        storage.remove(((Integer) searchKey).intValue());
+    }
+
+    @Override
+    protected Integer getSearchKey(String uuid) {
+        for (int i = 0; i < storage.size(); i++) {
+            if (storage.get(i).getUuid().equals(uuid)) {
+                return i;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    protected boolean isExist(Object searchKey) {
+        return searchKey != null;
     }
 }
