@@ -5,8 +5,13 @@ import ru.javawebinar.basejava.model.Resume;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * gkislin
@@ -28,12 +33,31 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     public void clear() {
-
+        try {
+            List<File> files = getFiles();
+            for (File file : files) {
+                file.delete();
+            }
+        } catch (IOException e) {
+            throw new StorageException("IO error", "", e);
+        }
     }
 
     @Override
     public int size() {
+        try {
+            return getFiles().size();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return 0;
+    }
+
+    private List<File> getFiles() throws IOException {
+        return Files.walk(Paths.get(directory.getPath()))
+                .filter(Files::isRegularFile)
+                .map(Path::toFile)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -43,7 +67,11 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     protected void doUpdate(Resume r, File file) {
-
+        try {
+            doWrite(r, file);
+        } catch (IOException e) {
+            throw new StorageException("IO error", file.getName(), e);
+        }
     }
 
     @Override
@@ -65,16 +93,26 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     protected Resume doGet(File file) {
-        return null;
+        return doRead(file);
     }
+
+    protected abstract Resume doRead(File file);
 
     @Override
     protected void doDelete(File file) {
-
+        file.delete();
     }
 
     @Override
     protected List<Resume> doCopyAll() {
-        return null;
+        List<Resume> result = new ArrayList<>();
+        try {
+            for(File file : getFiles()) {
+                result.add(doRead(file));
+            }
+        } catch (IOException e) {
+            throw new StorageException("IO error", "", e);
+        }
+        return result;
     }
 }
