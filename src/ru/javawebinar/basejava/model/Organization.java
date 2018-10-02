@@ -11,7 +11,7 @@ import java.util.Objects;
  */
 public class Organization {
     private final Link homePage;
-    private final List<Descripstion> descripstions = new ArrayList<>();
+    private final List<Description> descriptions = new ArrayList<>();
 
 
     public Organization(String name, String url, LocalDate startDate, LocalDate endDate, String title, String description) {
@@ -19,7 +19,7 @@ public class Organization {
         Objects.requireNonNull(endDate, "endDate must not be null");
         Objects.requireNonNull(title, "title must not be null");
         this.homePage = new Link(name, url);
-        descripstions.add(new Descripstion(startDate, endDate, title, description));
+        descriptions.add(new Description(startDate, endDate, title, description));
     }
 
     @Override
@@ -28,29 +28,29 @@ public class Organization {
         if (o == null || getClass() != o.getClass()) return false;
         Organization that = (Organization) o;
         return Objects.equals(homePage, that.homePage) &&
-                Objects.equals(descripstions, that.descripstions);
+                Objects.equals(descriptions, that.descriptions);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(homePage, descripstions);
+        return Objects.hash(homePage, descriptions);
     }
 
     @Override
     public String toString() {
         return "Organization{" +
                 "homePage=" + homePage +
-                ", descripstions=" + descripstions +
+                ", descriptions=" + descriptions +
                 '}';
     }
 
-    private class Descripstion {
+    private static class Description {
         private final LocalDate startDate;
         private final LocalDate endDate;
         private final String title;
         private final String description;
 
-        public Descripstion(LocalDate startDate, LocalDate endDate, String title, String description) {
+        public Description(LocalDate startDate, LocalDate endDate, String title, String description) {
             this.startDate = startDate;
             this.endDate = endDate;
             this.title = title;
