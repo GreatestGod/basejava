@@ -1,3 +1,4 @@
+/*
 package ru.javawebinar.basejava.storage;
 
 import ru.javawebinar.basejava.exception.StorageException;
@@ -102,3 +103,4 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
         return list;
     }
 }
+*/
