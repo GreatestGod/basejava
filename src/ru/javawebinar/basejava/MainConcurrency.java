@@ -58,6 +58,25 @@ public class MainConcurrency {
             }
         });
         System.out.println(mainConcurrency.counter);
+
+        String lock1 = "String a";
+        String lock2 = "String b";
+
+        Thread thread1 = new Thread(){
+            @Override
+            public void run() {
+                mainConcurrency.printMessage(lock1, lock2, getName());
+            }
+        };
+        Thread thread2 = new Thread(){
+            @Override
+            public void run() {
+                mainConcurrency.printMessage(lock2, lock1, getName());
+            }
+        };
+
+        thread1.start();
+        thread2.start();
     }
 
     private synchronized void inc() {
@@ -69,4 +88,19 @@ public class MainConcurrency {
 //                ...
 //        }
     }
+
+    private void printMessage(String a, String b, String message){
+        synchronized (a) {
+            System.out.println(message + " захватил " + a);
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            synchronized (b) {
+                System.out.println(message + " захватил " + b);
+            }
+        }
+    }
+
 }
