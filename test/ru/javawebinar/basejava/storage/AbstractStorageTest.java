@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public abstract class AbstractStorageTest {
-    protected static final File STORAGE_DIR = new File("/home/alexey/IdeaProjects/basejava/storage");
+    protected static final File STORAGE_DIR = new File("storage");
 
     protected Storage storage;
 
