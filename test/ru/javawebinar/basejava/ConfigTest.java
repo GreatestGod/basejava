@@ -11,7 +11,7 @@ public class ConfigTest {
 
     @Test
     public void getStorageDir() {
-        Assert.assertEquals(new File("/home/alexey/IdeaProjects/basejava/src/ru/javawebinar/basejava/storage"), Config.get().getStorageDir());
+        Assert.assertEquals(new File("storage"), Config.get().getStorageDir());
     }
 
     @Test
