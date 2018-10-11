@@ -1,31 +1,31 @@
 package ru.javawebinar.basejava.util;
 
-import ru.javawebinar.basejava.Config;
 import ru.javawebinar.basejava.exception.StorageException;
 import ru.javawebinar.basejava.sql.ConnectionFactory;
+import ru.javawebinar.basejava.sql.ExceptionUtil;
+import ru.javawebinar.basejava.sql.SqlExecutor;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
+
 import java.sql.*;
-import java.util.Collection;
+
 
 public class SqlHelper {
-    public final ConnectionFactory connectionFactory;
+    private final ConnectionFactory connectionFactory;
 
-    public SqlHelper() {
-        connectionFactory = () -> DriverManager.getConnection(Config.get().getDbUrl(), Config.get().getDbUser(), Config.get().getDbPassword());
+    public SqlHelper(ConnectionFactory connectionFactory) {
+        this.connectionFactory = connectionFactory;
     }
 
-    public void executeItem(String statement, String... parameter) throws StorageException {
+    public void execute(String sql) {
+        execute(sql, PreparedStatement::execute);
+    }
+
+    public <T> T execute(String sql, SqlExecutor<T> executor) {
         try (Connection conn = connectionFactory.getConnection();
-             PreparedStatement ps = conn.prepareStatement(statement)) {
-            if (parameter != null) {
-                for (int i = 0; i < parameter.length; i++)
-                    ps.setString(i + 1, parameter[i]);
-            }
-            ps.execute();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            return executor.execute(ps);
         } catch (SQLException e) {
-            throw new StorageException(e);
+            throw ExceptionUtil.convertExeption(e);
         }
     }
 }
