@@ -89,6 +89,7 @@ public class SqlStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
+
         return sqlHelper.execute("" +
                 "   SELECT * FROM resume r\n" +
                 "LEFT JOIN contact c ON r.uuid = c.resume_uuid\n" +
